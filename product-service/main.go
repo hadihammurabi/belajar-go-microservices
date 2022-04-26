@@ -15,5 +15,5 @@ func main() {
 
 	app := fiber.New()
 	controller.Init(app)
-	log.Fatal(app.Listen(":8001"))
+	log.Fatal(app.Listen(":8082"))
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/hadihammurabi/belajar-go-microservices/product-service/config"
 	"github.com/hadihammurabi/belajar-go-microservices/product-service/model"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -53,5 +54,37 @@ func (c *ProductController) CreateProduct(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"data": result,
+	})
+}
+
+func (c *ProductController) GetById(ctx *fiber.Ctx) error {
+	id := ctx.Params("id", "")
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return ctx.Status(500).JSON(fiber.Map{
+			"error": err,
+		})
+	}
+
+	result := c.getCollection().FindOne(ctx.Context(), bson.M{
+		"_id": objectID,
+	})
+	err = result.Err()
+	if err != nil {
+		return ctx.Status(500).JSON(fiber.Map{
+			"error": err,
+		})
+	}
+
+	var product *model.Product
+	err = result.Decode(&product)
+	if err != nil {
+		return ctx.Status(500).JSON(fiber.Map{
+			"error": err,
+		})
+	}
+
+	return ctx.JSON(fiber.Map{
+		"data": product,
 	})
 }

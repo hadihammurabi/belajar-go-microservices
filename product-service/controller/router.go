@@ -7,6 +7,7 @@ func route(app *fiber.App) {
 	products := app.Group("/products")
 	products.Get("", productController.GetAllProducts)
 	products.Post("", productController.CreateProduct)
+	products.Get("/:id", productController.GetById)
 }
 
 func Init(app *fiber.App) {
